@@ -49,6 +49,11 @@ const movies: Movie[] = [
     url:'https://www.youtube.com/watch?v=Is-8K1ImkHo'
   },
 ];
+app.get("/", (req:Request, res:Response) => {
+  return res
+    .status(200)
+    .json({ message:'hello from express and vercel' });
+});
 app.get("/me", (req:Request, res:Response) => {
   return res
     .status(200)

@@ -5,11 +5,6 @@
                   "src":"./src/index.ts",
                   "use":"@now/node"
             }
-      ],
-      "route":[
-            {
-                  "src":"/(.*)",
-                  "dest":"./src/index.ts"
-            }
       ]
+      
 }

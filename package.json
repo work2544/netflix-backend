@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsnd ./src/index.ts",
-    "build": "tsc --project ./"
+    "dev": "tsnd ./src/index.ts"
+    
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,5 @@
 {
-      "version":1,
+      "version":2,
       "build":[
             {
                   "src":"./src/index.ts",
@@ -9,7 +9,7 @@
       "route":[
             {
                   "src":"/(.*)",
-                  "dest":"index.ts"
+                  "dest":"./src/index.ts"
             }
       ]
 }

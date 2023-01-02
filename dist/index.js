@@ -93,16 +93,16 @@ app.get("/movieList", (req, res) => {
     }
     return res.json({ status: "success", movies });
 });
-// app.get("/user", (req: Request, res: Response) => {
-//   return res.json({ status: "success", users });
-// });
-// app.get("/user/:name", (req: Request, res: Response) => {
-//   const Qname = String(req.params.name);
-//   var user = users.filter((x) => {
-//     return x.username === Qname;
-//   });
-//   return res.json({ status: "success", user });
-// });
+app.get("/user", (req, res) => {
+    return res.json({ status: "success", users });
+});
+app.get("/user/:name", (req, res) => {
+    const Qname = String(req.params.name);
+    var user = users.filter((x) => {
+        return x.username === Qname;
+    });
+    return res.json({ status: "success", user });
+});
 // app.get("/user/login", async (req, res) => {
 //   const user = auth(req);
 //   if (!user)

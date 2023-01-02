@@ -1,7 +1,7 @@
-import express, { Application, Request, Response, NextFunction } from "express";
+import express, { Application, Request, Response} from "express";
 import auth from "basic-auth";
-import jwt, { decode } from "jsonwebtoken";
-import bcrypt, { hash } from "bcrypt";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 declare global {
   namespace Express {
     interface Request {
@@ -37,9 +37,6 @@ const initialUsers: User[] = [
 var users: User[] = [...initialUsers];
 
 const SECRET = "mysecret";
-type MyJwtPayload = {
-  username: string;
-} & jwt.JwtPayload;
 
 const movies: Movie[] = [
   {
@@ -126,53 +123,54 @@ app.get("/movieList", (req: Request, res: Response) => {
 //   return res.json({ status: "success", user });
 // });
 
-app.get("/user/login", async (req, res) => {
-  const user = auth(req);
+// app.get("/user/login", async (req, res) => {
+//   const user = auth(req);
 
-  if (!user)
-    return res
-      .status(404)
-      .json({ status: "failed", message: "Invalid username or password" });
-  const username = user.name;
-  const password = user.pass;
+//   if (!user)
+//     return res
+//       .status(404)
+//       .json({ status: "failed", message: "Invalid username or password" });
+//   const username = user.name;
+//   const password = user.pass;
 
-  const foundUser = users.find(
-    (x) => x.username === username && bcrypt.compareSync(password, x.password)
-  );
-  if (!foundUser)
-    return res
-      .status(404)
-      .json({ status: "failed", message: "Invalid username or password" });
-  const token = jwt.sign({ username }, SECRET, { expiresIn: "10h" });
-  return res.json({ status: "success", token });
-}); //ok
+//   const foundUser = users.find(
+//     (x) => x.username === username && bcrypt.compareSync(password, x.password)
+//   );
+//   if (!foundUser)
+//     return res
+//       .status(404)
+//       .json({ status: "failed", message: "Invalid username or password" });
+//   const token = jwt.sign({ username }, SECRET, { expiresIn: "10h" });
+//   return res.json({ status: "success", token });
+// }); //ok
 
-app.delete("/reset", (req, res) => {
-  users = [initialUsers[0]];
-  return res.json({ status: "success" });
-}); //ok
+// app.delete("/reset", (req, res) => {
+//   users = [initialUsers[0]];
+//   return res.json({ status: "success" });
+// }); //ok
 
-app.post("/user/regis", async (req, res) => {
-  const user = req.body;
-  const username = user.username;
-  const password = user.password;
-  if (
-    username === "" ||
-    password === "" ||
-    typeof username !== "string" ||
-    typeof password !== "string"
-  )
-    return res.status(400).json({ status: "failed", message: "Invalid input" });
-  if (users.find((x) => x.username === username) !== undefined) {
-    return res
-      .status(400)
-      .json({ status: "failed", message: "Username is already used" });
-  }
-  user.password = bcrypt.hashSync(password, 10);
-  users.push(user);
-  console.log(users);
-  return res.status(200).json({ status: "success", username: username });
-}); //ok
+// app.post("/user/regis", async (req, res) => {
+//   const user = req.body;
+//   const username = user.username;
+//   const password = user.password;
+//   if (
+//     username === "" ||
+//     password === "" ||
+//     typeof username !== "string" ||
+//     typeof password !== "string"
+//   )
+//     return res.status(400).json({ status: "failed", message: "Invalid input" });
+//   if (users.find((x) => x.username === username) !== undefined) {
+//     return res
+//       .status(400)
+//       .json({ status: "failed", message: "Username is already used" });
+//   }
+//   user.password = bcrypt.hashSync(password, 10);
+//   users.push(user);
+//   console.log(users);
+//   return res.status(200).json({ status: "success", username: username });
+// }); //ok
+
 const PORT = 9000;
 app.listen("https://netflix-backend-gray.vercel.app", () => {
   console.log(`Server is running at http://localhost:${PORT}`);

@@ -144,32 +144,32 @@ app.get("/user/:name", (req: Request, res: Response) => {
 //   return res.json({ status: "success", token });
 // }); //ok
 
-// app.delete("/reset", (req, res) => {
-//   users = [initialUsers[0]];
-//   return res.json({ status: "success" });
-// }); //ok
-
-app.post("/user/regis", async (req, res) => {
-  const user = req.body;
-  const username = user.username;
-  const password = user.password;
-  if (
-    username === "" ||
-    password === "" ||
-    typeof username !== "string" ||
-    typeof password !== "string"
-  )
-    return res.status(400).json({ status: "failed", message: "Invalid input" });
-  if (users.find((x) => x.username === username) !== undefined) {
-    return res
-      .status(400)
-      .json({ status: "failed", message: "Username is already used" });
-  }
-  user.password = bcrypt.hashSync(password, 10);
-  users.push(user);
-  console.log(users);
-  return res.status(200).json({ status: "success", username: username });
+app.delete("/reset", (req, res) => {
+  users = [initialUsers[0]];
+  return res.json({ status: "success" });
 }); //ok
+
+// app.post("/user/regis", async (req, res) => {
+//   const user = req.body;
+//   const username = user.username;
+//   const password = user.password;
+//   if (
+//     username === "" ||
+//     password === "" ||
+//     typeof username !== "string" ||
+//     typeof password !== "string"
+//   )
+//     return res.status(400).json({ status: "failed", message: "Invalid input" });
+//   if (users.find((x) => x.username === username) !== undefined) {
+//     return res
+//       .status(400)
+//       .json({ status: "failed", message: "Username is already used" });
+//   }
+//   user.password = bcrypt.hashSync(password, 10);
+//   users.push(user);
+//   console.log(users);
+//   return res.status(200).json({ status: "success", username: username });
+// }); //ok
 
 const PORT = 9000;
 app.listen("https://netflix-backend-gray.vercel.app", () => {

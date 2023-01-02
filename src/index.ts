@@ -123,26 +123,26 @@ app.get("/user/:name", (req: Request, res: Response) => {
   return res.json({ status: "success", user });
 });
 
-app.get("/user/login", async (req, res) => {
-  const user = auth(req);
+// app.get("/user/login", async (req, res) => {
+//   const user = auth(req);
 
-  if (!user)
-    return res
-      .status(404)
-      .json({ status: "failed", message: "Invalid username or password" });
-  const username = user.name;
-  const password = user.pass;
+//   if (!user)
+//     return res
+//       .status(404)
+//       .json({ status: "failed", message: "Invalid username or password" });
+//   const username = user.name;
+//   const password = user.pass;
 
-  const foundUser = users.find(
-    (x) => x.username === username && bcrypt.compareSync(password, x.password)
-  );
-  if (!foundUser)
-    return res
-      .status(404)
-      .json({ status: "failed", message: "Invalid username or password" });
-  const token = jwt.sign({ username }, SECRET, { expiresIn: "10h" });
-  return res.json({ status: "success", token });
-}); //ok
+//   const foundUser = users.find(
+//     (x) => x.username === username && bcrypt.compareSync(password, x.password)
+//   );
+//   if (!foundUser)
+//     return res
+//       .status(404)
+//       .json({ status: "failed", message: "Invalid username or password" });
+//   const token = jwt.sign({ username }, SECRET, { expiresIn: "10h" });
+//   return res.json({ status: "success", token });
+// }); //ok
 
 app.delete("/reset", (req, res) => {
   users = [initialUsers[0]];

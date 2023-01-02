@@ -1,6 +1,17 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
+import auth from "basic-auth";
+import jwt, { decode } from "jsonwebtoken";
+import bcrypt, { hash } from "bcrypt";
+declare global {
+  namespace Express {
+    interface Request {
+      username: string;
+    }
+  }
+}
 
 const app: Application = express();
+
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -11,6 +22,25 @@ type Movie = {
   name: string;
   url: string;
 };
+
+type User = {
+  username: string;
+  password: string;
+};
+const initialUsers: User[] = [
+  {
+    username: "admin",
+    password: "$2b$10$yKLJIkR2w0CQCTp1R3/RBuYIOUJmTH4aa2TB53tN21JRco5cy9wp2", //hashed from "1234"
+  },
+];
+
+var users: User[] = [...initialUsers];
+
+const SECRET = "mysecret";
+type MyJwtPayload = {
+  username: string;
+} & jwt.JwtPayload;
+
 const movies: Movie[] = [
   {
     name: "sevensin",
@@ -69,24 +99,88 @@ app.get("/movieList", (req: Request, res: Response) => {
     movies.sort((a, b) => {
       var nameA = a.name.toLowerCase(),
         nameB = b.name.toLowerCase();
-      if (nameA < nameB)
-        return -1;
+      if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
-      return 0; 
+      return 0;
     });
   } else if (req.query.order == "desc") {
     movies.sort((a, b) => {
       var nameA = a.name.toLowerCase(),
         nameB = b.name.toLowerCase();
-      if (nameA > nameB)
-        
-        return -1;
+      if (nameA > nameB) return -1;
       if (nameA < nameB) return 1;
-      return 0; 
+      return 0;
     });
   }
   return res.json({ status: "success", movies });
 });
+app.get("/user",(req: Request, res: Response) => {
+  return res.json({ status: "success", users });
+})
+app.get("/user/login", async (req, res) => {
+  const user = auth(req);
+
+  if (!user)
+    return res
+      .status(404)
+      .json({ status: "failed", message: "Invalid username or password" });
+  const username = user.name;
+  const password = user.pass;
+
+  const foundUser = users.find(
+    (x) => x.username === username && bcrypt.compareSync(password, x.password)
+  );
+  if (!foundUser)
+    return res
+      .status(404)
+      .json({ status: "failed", message: "Invalid username or password" });
+  const token = jwt.sign({ username }, SECRET, { expiresIn: "10h" });
+  return res.json({ status: "success", token });
+}); //ok
+
+app.delete("/reset", (req, res) => {
+  users = [initialUsers[0]];
+  return res.json({ status: "success" });
+}); //ok
+
+const checkToken = async (req: Request, res: Response, next: NextFunction) => {
+  const bearerHeader = req.headers["authorization"];
+  if (bearerHeader) {
+    const splited = bearerHeader.split(" ");
+    const token = splited[1];
+    try {
+      const decoded = jwt.verify(token, SECRET) as MyJwtPayload;
+      const username = decoded.username;
+      const role = decoded.role;
+      req.username = username;
+      next();
+    } catch {
+      return res.status(401).json({ status: "failed" });
+    }
+  } else return res.status(401).json({ status: "failed" });
+}; //ok
+
+app.post("/user/regis", async (req, res) => {
+  const user = req.body;
+  const username = user.username;
+  const password = user.password;
+  if (
+    username === "" ||
+    password === "" ||
+    typeof username !== "string" ||
+    typeof password !== "string"
+  )
+    return res.status(400).json({ status: "failed", message: "Invalid input" });
+  if (users.find((x) => x.username === username) !== undefined) {
+    return res
+      .status(400)
+      .json({ status: "failed", message: "Username is already used" });
+  }
+  user.password = bcrypt.hashSync(password, 10);
+  users.push(user);
+  console.log(users);
+  return res.status(200).json({ status: "success", username: username });
+}); //ok
 const PORT = 9000;
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

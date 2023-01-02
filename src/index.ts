@@ -152,23 +152,6 @@ app.delete("/reset", (req, res) => {
   return res.json({ status: "success" });
 }); //ok
 
-const checkToken = async (req: Request, res: Response, next: NextFunction) => {
-  const bearerHeader = req.headers["authorization"];
-  if (bearerHeader) {
-    const splited = bearerHeader.split(" ");
-    const token = splited[1];
-    try {
-      const decoded = jwt.verify(token, SECRET) as MyJwtPayload;
-      const username = decoded.username;
-      const role = decoded.role;
-      req.username = username;
-      next();
-    } catch {
-      return res.status(401).json({ status: "failed" });
-    }
-  } else return res.status(401).json({ status: "failed" });
-}; //ok
-
 app.post("/user/regis", async (req, res) => {
   const user = req.body;
   const username = user.username;

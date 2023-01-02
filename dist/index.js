@@ -135,25 +135,6 @@ app.delete("/reset", (req, res) => {
     users = [initialUsers[0]];
     return res.json({ status: "success" });
 }); //ok
-const checkToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const bearerHeader = req.headers["authorization"];
-    if (bearerHeader) {
-        const splited = bearerHeader.split(" ");
-        const token = splited[1];
-        try {
-            const decoded = jsonwebtoken_1.default.verify(token, SECRET);
-            const username = decoded.username;
-            const role = decoded.role;
-            req.username = username;
-            next();
-        }
-        catch (_a) {
-            return res.status(401).json({ status: "failed" });
-        }
-    }
-    else
-        return res.status(401).json({ status: "failed" });
-}); //ok
 app.post("/user/regis", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.body;
     const username = user.username;

@@ -67,41 +67,44 @@ const movies = [
         url: "https://www.youtube.com/watch?v=Is-8K1ImkHo",
     },
 ];
-// app.get("/", (req: Request, res: Response) => {
-//   return res.status(200).json({ message: "hello from express and vercel" });
-// });
-// app.get("/me", (req: Request, res: Response) => {
-//   return res
-//     .status(200)
-//     .json({ name: "latthaphol laohapiboonrattana", code: "630610759" });
-// });
-// app.get("/movie/:name", (req: Request, res: Response) => {
-//   const Qname = String(req.params.name);
-//   var Amovie = movies.filter((x) => {
-//     return x.name === Qname;
-//   });
-//   return res.json({ status: "success", Amovie });
-// });
-// app.get("/movieList", (req: Request, res: Response) => {
-//   if (req.query.order == "asc") {
-//     movies.sort((a, b) => {
-//       var nameA = a.name.toLowerCase(),
-//         nameB = b.name.toLowerCase();
-//       if (nameA < nameB) return -1;
-//       if (nameA > nameB) return 1;
-//       return 0;
-//     });
-//   } else if (req.query.order == "desc") {
-//     movies.sort((a, b) => {
-//       var nameA = a.name.toLowerCase(),
-//         nameB = b.name.toLowerCase();
-//       if (nameA > nameB) return -1;
-//       if (nameA < nameB) return 1;
-//       return 0;
-//     });
-//   }
-//   return res.json({ status: "success", movies });
-// });
+app.get("/", (req, res) => {
+    return res.status(200).json({ message: "hello from express and vercel" });
+});
+app.get("/me", (req, res) => {
+    return res
+        .status(200)
+        .json({ name: "latthaphol laohapiboonrattana", code: "630610759" });
+});
+app.get("/movie/:name", (req, res) => {
+    const Qname = String(req.params.name);
+    var Amovie = movies.filter((x) => {
+        return x.name === Qname;
+    });
+    return res.json({ status: "success", Amovie });
+});
+app.get("/movieList", (req, res) => {
+    if (req.query.order == "asc") {
+        movies.sort((a, b) => {
+            var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+            if (nameA < nameB)
+                return -1;
+            if (nameA > nameB)
+                return 1;
+            return 0;
+        });
+    }
+    else if (req.query.order == "desc") {
+        movies.sort((a, b) => {
+            var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+            if (nameA > nameB)
+                return -1;
+            if (nameA < nameB)
+                return 1;
+            return 0;
+        });
+    }
+    return res.json({ status: "success", movies });
+});
 app.get("/user", (req, res) => {
     return res.json({ status: "success", users });
 });

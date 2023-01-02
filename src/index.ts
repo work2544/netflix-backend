@@ -2,6 +2,13 @@ import express, { Application, Request, Response } from "express";
 import auth from "basic-auth";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+declare global {
+  namespace Express {
+    interface Request {
+      username: string;
+    }
+  }
+}
 
 const app: Application = express();
 
@@ -117,24 +124,27 @@ app.get("/user/:name", (req: Request, res: Response) => {
 });
 
 app.get("/user/login", async (req, res) => {
-  const user = auth(req);
+  const user:any = auth(req);
+  try {
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Invalid username or password" });
+    const username = user.name;
+    const password = user.pass;
 
-  if (!user)
-    return res
-      .status(404)
-      .json({ status: "failed", message: "Invalid username or password" });
-  const username = user.name;
-  const password = user.pass;
-
-  const foundUser = users.find(
-    (x) => x.username === username && bcrypt.compareSync(password, x.password)
-  );
-  if (!foundUser)
-    return res
-      .status(404)
-      .json({ status: "failed", message: "Invalid username or password" });
-  const token = jwt.sign({ username }, SECRET, { expiresIn: "10h" });
-  return res.json({ status: "success", token });
+    const foundUser = users.find(
+      (x) => x.username === username && bcrypt.compareSync(password, x.password)
+    );
+    if (!foundUser)
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Invalid username or password" });
+    const token = jwt.sign({ username }, SECRET, { expiresIn: "10h" });
+    return res.json({ status: "success", token });
+  } catch (error) {
+    console.log(error);
+  }
 }); //ok
 
 app.delete("/reset", (req, res) => {
@@ -146,22 +156,27 @@ app.post("/user/regis", async (req, res) => {
   const user = req.body;
   const username = user.username;
   const password = user.password;
-  if (
-    username === "" ||
-    password === "" ||
-    typeof username !== "string" ||
-    typeof password !== "string"
-  )
-    return res.status(400).json({ status: "failed", message: "Invalid input" });
-  if (users.find((x) => x.username === username) !== undefined) {
-    return res
-      .status(400)
-      .json({ status: "failed", message: "Username is already used" });
+  try {
+    if (
+      username === "" ||
+      password === "" ||
+      typeof username !== "string" ||
+      typeof password !== "string"
+    )
+      return res.status(400).json({ status: "failed", message: "Invalid input" });
+    if (users.find((x) => x.username === username) !== undefined) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Username is already used" });
+    }
+    user.password = bcrypt.hashSync(password, 10);
+    users.push(user);
+    console.log(users);
+    return res.status(200).json({ status: "success", username: username });
+  } catch (error) {
+    console.log(error);
   }
-  user.password = bcrypt.hashSync(password, 10);
-  users.push(user);
-  console.log(users);
-  return res.status(200).json({ status: "success", username: username });
+  
 }); //ok
 
 const PORT = 9000;

@@ -1,9 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({
@@ -125,27 +135,25 @@ app.get("/user/:name", (req, res) => {
 //   users = [initialUsers[0]];
 //   return res.json({ status: "success" });
 // }); //ok
-// app.post("/user/regis", async (req, res) => {
-//   const user = req.body;
-//   const username = user.username;
-//   const password = user.password;
-//   if (
-//     username === "" ||
-//     password === "" ||
-//     typeof username !== "string" ||
-//     typeof password !== "string"
-//   )
-//     return res.status(400).json({ status: "failed", message: "Invalid input" });
-//   if (users.find((x) => x.username === username) !== undefined) {
-//     return res
-//       .status(400)
-//       .json({ status: "failed", message: "Username is already used" });
-//   }
-//   user.password = bcrypt.hashSync(password, 10);
-//   users.push(user);
-//   console.log(users);
-//   return res.status(200).json({ status: "success", username: username });
-// }); //ok
+app.post("/user/regis", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.body;
+    const username = user.username;
+    const password = user.password;
+    if (username === "" ||
+        password === "" ||
+        typeof username !== "string" ||
+        typeof password !== "string")
+        return res.status(400).json({ status: "failed", message: "Invalid input" });
+    if (users.find((x) => x.username === username) !== undefined) {
+        return res
+            .status(400)
+            .json({ status: "failed", message: "Username is already used" });
+    }
+    user.password = bcrypt_1.default.hashSync(password, 10);
+    users.push(user);
+    console.log(users);
+    return res.status(200).json({ status: "success", username: username });
+})); //ok
 const PORT = 9000;
 app.listen("https://netflix-backend-gray.vercel.app", () => {
     console.log(`Server is running at http://localhost:${PORT}`);

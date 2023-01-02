@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const basic_auth_1 = __importDefault(require("basic-auth"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({
@@ -124,7 +124,7 @@ app.get("/user/login", (req, res) => __awaiter(void 0, void 0, void 0, function*
                 .json({ status: "failed", message: "Invalid username or password" });
         const username = user.name;
         const password = user.pass;
-        const foundUser = users.find((x) => x.username === username && bcrypt_1.default.compareSync(password, x.password));
+        const foundUser = users.find((x) => x.username === username && bcryptjs_1.default.compareSync(password, x.password));
         if (!foundUser)
             return res
                 .status(404)
@@ -155,7 +155,7 @@ app.post("/user/regis", (req, res) => __awaiter(void 0, void 0, void 0, function
                 .status(400)
                 .json({ status: "failed", message: "Username is already used" });
         }
-        user.password = bcrypt_1.default.hashSync(password, 10);
+        user.password = bcryptjs_1.default.hashSync(password, 10);
         users.push(user);
         console.log(users);
         return res.status(200).json({ status: "success", username: username });

@@ -1,7 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import auth from "basic-auth";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 declare global {
   namespace Express {
     interface Request {

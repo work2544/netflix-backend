@@ -191,7 +191,7 @@ app.post("/user/regis", async (req, res) => {
   return res.status(200).json({ status: "success", username: username });
 }); //ok
 const PORT = 9000;
-app.listen(PORT, () => {
+app.listen("https://netflix-backend-gray.vercel.app", () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
 module.exports = app;
